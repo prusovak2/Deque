@@ -23,6 +23,7 @@ namespace Mianen.DataStructures.Tests
                 d.AddHead(i);
                 l.Add(i);
             }
+            Console.WriteLine("some shit");
             for (int i = 0; i < upper; i++)
             {
                 int ll = l[upper -1 - i];
@@ -36,40 +37,55 @@ namespace Mianen.DataStructures.Tests
             var d = new Deque<int>();
             var l = new List<int>();
 
-            int upper = 257;
+            int upper = 10000;
             Random rnd = new Random();
             for (int i = 0; i < upper; i++)
             {
                 d.Add(i);
                 l.Add(i);
             }
+            Console.WriteLine("some shit");
             for (int i = 0; i < upper; i++)
-            {
-                Console.WriteLine("some shit");
+            {                
                 Assert.AreEqual(l[i], d[i]);
             }
         }
-        /*/
+        
         [TestMethod()]
         public void Insert()
         {
             var d = new Deque<int>();
+            d.Add(42);
             d.Insert(0, 1);
             Assert.AreEqual(d[0], 1);
             Assert.AreEqual(d.First, 1);
-            Assert.AreEqual(d.Last, 1);
+            Assert.AreEqual(d.Last, 42);
         }
 
         [TestMethod()]
         public void InsertAtBeginning()
         {
+            List<int> l = new List<int>();
+            l.Add(42);
+            l.Insert(0, 1);
+            l.Insert(1, 5);
+            foreach ( var item in l)
+            {
+                Console.WriteLine(item);
+            }
             var d = new Deque<int>();
+            d.Add(42);
             d.Insert(0, 1);
-            d.Insert(0, 5);
-            Assert.AreEqual(d[0], 5);
-            Assert.AreEqual(d[1], 1);
-            Assert.AreEqual(d.First, 5);
-            Assert.AreEqual(d.Last, 1);
+            d.Insert(1, 5);
+            Assert.AreEqual(d[0], 1);
+            Assert.AreEqual(d[1], 5);
+            Assert.AreEqual(d.First, 1);
+            Assert.AreEqual(d.Last, 42);
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.WriteLine("abraka");
+                Console.WriteLine(d[i]);
+            }
         }
 
         [TestMethod()]
@@ -90,7 +106,7 @@ namespace Mianen.DataStructures.Tests
                 Assert.IsTrue(ForEachEqual(d, l));
             }
         }
-
+        /*/
         [TestMethod()]
         public void Insert_Reverse_KliberExample()
         {
@@ -775,6 +791,76 @@ namespace Mianen.DataStructures.Tests
         }
 
 
+       
+
+        [TestMethod()]
+        public void IndexOf()
+        {
+            var D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+            Assert.AreEqual(1, D.IndexOf(2));
+            Assert.AreEqual(9, D.IndexOf(10));
+            D.Reverse();
+        }
+
+        [TestMethod()]
+        public void IndexOfReverse()
+        {
+            var D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+            Assert.AreEqual(1, D.IndexOf(2));
+            Assert.AreEqual(9, D.IndexOf(10));
+            D.Reverse();
+            Assert.AreEqual(1, D.IndexOf(9));
+            Assert.AreEqual(0, D.IndexOf(10));
+        }
+
+        [TestMethod()]
+        public void IndexOfNone()
+        {
+            var D = new Deque<int> { };
+
+            Assert.AreEqual(-1, D.IndexOf(100));
+
+        }
+                [TestMethod()]
+        public void Insert()
+        {
+            var d = new Deque<int>();
+            d.Insert(0, 1);
+            Assert.AreEqual(d[0], 1);
+            Assert.AreEqual(d.First, 1);
+            Assert.AreEqual(d.Last, 1);
+        }
+
+        [TestMethod()]
+        public void InsertAtBeginning()
+        {
+            var d = new Deque<int>();
+            d.Insert(0, 1);
+            d.Insert(0, 5);
+            Assert.AreEqual(d[0], 5);
+            Assert.AreEqual(d[1], 1);
+            Assert.AreEqual(d.First, 5);
+            Assert.AreEqual(d.Last, 1);
+        }
+        /**/
+        public void GetToCompare(out List<string> L, out Deque<string> D)
+        {
+            D = new Deque<string>();
+            L = new List<string>();
+            D.Add("Bill");
+            D.Add("Mike");
+            D.Add("Alice");
+            D.Add("Trevor");
+            D.Add("Scott");
+
+            L.Add("Bill");
+            L.Add("Mike");
+            L.Add("Alice");
+            L.Add("Trevor");
+            L.Add("Scott");
+        }
         bool ForEachEqual(Deque<int> d, List<int> to)
         {
             var actualItems = new List<int>();
@@ -831,53 +917,5 @@ namespace Mianen.DataStructures.Tests
             return d;
         }
 
-        [TestMethod()]
-        public void IndexOf()
-        {
-            var D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-
-            Assert.AreEqual(1, D.IndexOf(2));
-            Assert.AreEqual(9, D.IndexOf(10));
-            D.Reverse();
-        }
-
-        [TestMethod()]
-        public void IndexOfReverse()
-        {
-            var D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-
-            Assert.AreEqual(1, D.IndexOf(2));
-            Assert.AreEqual(9, D.IndexOf(10));
-            D.Reverse();
-            Assert.AreEqual(1, D.IndexOf(9));
-            Assert.AreEqual(0, D.IndexOf(10));
-        }
-
-        [TestMethod()]
-        public void IndexOfNone()
-        {
-            var D = new Deque<int> { };
-
-            Assert.AreEqual(-1, D.IndexOf(100));
-
-        }
-
-        public void GetToCompare(out List<string> L, out Deque<string> D)
-        {
-            D = new Deque<string>();
-            L = new List<string>();
-            D.Add("Bill");
-            D.Add("Mike");
-            D.Add("Alice");
-            D.Add("Trevor");
-            D.Add("Scott");
-
-            L.Add("Bill");
-            L.Add("Mike");
-            L.Add("Alice");
-            L.Add("Trevor");
-            L.Add("Scott");
-        }
-        /**/
     }
 }

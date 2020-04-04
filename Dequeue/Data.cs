@@ -10,13 +10,18 @@ namespace Dequeue
         {
             private static readonly int sizeOfBlock = 128;
             private int NumOfBlockRefs { get; set; } = 2;
-            private int NumOfUsedBlocks { get; set; } = 2;
-            private int TailBlock { get => HeadBlock + NumOfUsedBlocks -1; }
-            private int HeadBlock { get; set; } = 0;
+            ///private int NumOfUsedBlocks { get; set; } = 2;
+            ///private int TailBlock { get => HeadBlock + NumOfUsedBlocks -1; }
+            //private int HeadBlock { get; set; } = 0;
 
 
             private int HeadIndex { get; set; } = sizeOfBlock;
-            private int TailIndex { get => HeadIndex + Count -1; }
+            private int TailIndex 
+            { get 
+                { if (Count == 0) { return 0; }      
+                    else {return  HeadIndex + Count - 1; }
+                }                   
+            }
             public int Count { get; private set; } = 0;
             //private int currCapacity { get => (NumOfBlockRefs * sizeOfBlock) - Count; }
 
@@ -32,13 +37,13 @@ namespace Dequeue
             {              
                 get
                 {
-                    }
+                    
                     if (i < 0)
                     {
                         throw new IndexOutOfRangeException();
                     }
-                    int index = i + HeadIndex + HeadBlock*sizeOfBlock;
-                    if(index > TailIndex+HeadBlock*sizeOfBlock)
+                    int index = i + HeadIndex;
+                    if(index > TailIndex)
                     {
                         throw new IndexOutOfRangeException();
                     }
@@ -50,9 +55,8 @@ namespace Dequeue
                     {
                         throw new IndexOutOfRangeException();
                     }
-                    //both head and tail index are relative to begining of first existing block
-                    int index = i + HeadIndex + HeadBlock* sizeOfBlock;
-                    if (index > TailIndex+HeadBlock*sizeOfBlock)
+                    int index = i + HeadIndex;
+                    if (index > TailIndex)
                     {
                         throw new IndexOutOfRangeException();
                     }
@@ -64,56 +68,27 @@ namespace Dequeue
             private int GetIndexOfBlock(int i) => ((i) / sizeOfBlock);
             private int GetIndexInBlock(int i) => ((i) % sizeOfBlock);
 
-            private void AddBlockBegining()
+            void DoubleSize()
             {
-                if (this.HeadBlock == 0)
+                int oldNumOfRefs = NumOfBlockRefs;
+                NumOfBlockRefs *= 2;
+                S[][] newData = new S[NumOfBlockRefs][];
+                int occupiedIndex = NumOfBlockRefs / 4;
+                data.CopyTo(newData, occupiedIndex);
+                for (int i = 0; i < occupiedIndex; i++)
                 {
-                    //double num of references
-                    this.NumOfBlockRefs *= 2;
-                    S[][] newData = new S[this.NumOfBlockRefs][];
-                    //place existing array in the middle of the old one and alloc one new block in front of it (-1)
-                    this.HeadBlock = (this.NumOfBlockRefs / 4) -1;
-                    this.data.CopyTo(newData, this.HeadBlock+1);
-                    newData[HeadBlock] = new S[sizeOfBlock];
-                    this.data = newData;
-                    //head should point to existing item at the beggining of second bloc
-                    this.HeadIndex = sizeOfBlock;
+                    newData[i] = new S[sizeOfBlock];
+                    newData[occupiedIndex+oldNumOfRefs + i] = new S[sizeOfBlock];
                 }
-                else
-                {
-                    this.HeadBlock--;
-                    this.data[this.HeadBlock] = new S[sizeOfBlock];
-                    this.HeadIndex = sizeOfBlock;
-                }
-                NumOfUsedBlocks++;
-            }
-            private void AddBlockEnd()
-            {
-                if(this.TailBlock== this.NumOfBlockRefs-1)
-                {
-                    //double num of references
-                    this.NumOfBlockRefs *= 2;
-                    S[][] newData = new S[this.NumOfBlockRefs][];
-                    //place existing array in the middle of the new one
-                    this.HeadBlock = (this.NumOfBlockRefs / 4);
-                    this.data.CopyTo(newData, this.HeadBlock);
-                    this.NumOfUsedBlocks++; //this does increment tailBlock index
-                    newData[TailBlock] = new S[sizeOfBlock];
-                    this.data = newData;
-                    //do not change head index
-                }
-                else
-                {
-                    this.NumOfUsedBlocks++; //this does increment tailBlock index
-                    this.data[TailBlock] = new S[sizeOfBlock];
-                }
+                this.data = newData;
+                this.HeadIndex = (occupiedIndex *sizeOfBlock) +this.HeadIndex;
             }
 
             public void AddBegining(S item)
             {
                 if (this.HeadIndex <= 0)
                 {
-                    AddBlockBegining();
+                    DoubleSize();
                 }
                 this.HeadIndex--;
                 Count++;
@@ -121,17 +96,93 @@ namespace Dequeue
             }
             public void AddEnd(S item)
             {
-                if(Count == 257)
+                if (this.TailIndex >= (NumOfBlockRefs*sizeOfBlock)-1) //-1 to avoid accessing non existing array
                 {
-
-                }
-
-                if (this.TailIndex >= (NumOfUsedBlocks*sizeOfBlock)-1)
-                {
-                    AddBlockEnd();
+                    DoubleSize();
                 }
                 Count++;
-                this[TailIndex-HeadIndex] = item; //indexing relative to head index
+                this[Count-1] = item; //indexing relative to head index
+            }
+            public void Insert(int index, S item)
+            {
+                if(index<0 || index >= Count)
+                {
+                    throw new IndexOutOfRangeException("My awesome exception");
+                }
+                if (this.TailIndex >= (NumOfBlockRefs * sizeOfBlock) - 1) //-1 to avoid accessing non existing array
+                {
+                    DoubleSize();
+                }
+                Count++;
+                for (int i = this.Count-1; i > index; i--)
+                {
+                    this[i] = this[i - 1];
+                }
+                this[index] = item;
+            }
+            public void RemoveAt(int index)
+            {
+                if (index < 0 || index >= Count)
+                {
+                    throw new IndexOutOfRangeException("My awesome exception");
+                }
+                for (int i = index; i < Count-1; i++)
+                {
+                    this[i] = this[i + 1];
+                }
+                this[Count - 1] = default(S);
+                Count--;
+            }
+            /// <summary>
+            /// Searches for the specified object and returns the zero-based index of the first occurrence within the entire Deque<T>.
+            /// </summary>
+            /// <param name="S"></param>
+            /// <returns>e zero-based index of the first occurrence of item within the entire Deque<T>, if found; otherwise, -1.</returns>
+            public int IndexOf(S item)
+            {
+                for (int index = 0; index < Count; index++)
+                {
+                    if (object.Equals(this[index], item))
+                    {
+                        return index;
+                    }
+                }
+                return -1;
+            }
+            public bool Remove(S item)
+            {
+                int index = IndexOf(item);
+                if (index == -1)
+                {
+                    return false;
+                }
+                RemoveAt(index);
+                return true;
+            }
+            public bool Contains(S item)
+            {
+                for (int index = 0; index < Count; index++)
+                {
+                    if (object.Equals(this[index], item))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            public void Clear()
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    this[i] = default(S);
+                }
+                Count = 0;
+                // to reset a size of Deque allocated?
+                this.NumOfBlockRefs = 2;
+                this.HeadIndex = sizeOfBlock;
+                this.data = new S[NumOfBlockRefs][];
+                this.data[0] = new S[sizeOfBlock];
+                this.data[1] = new S[sizeOfBlock];
             }
 
         }

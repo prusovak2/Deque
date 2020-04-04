@@ -32,9 +32,6 @@ namespace Dequeue
             {              
                 get
                 {
-                    if (i == 4096)
-                    {
-
                     }
                     if (i < 0)
                     {

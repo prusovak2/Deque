@@ -144,11 +144,11 @@ namespace Dequeue
 
                 if(index<0 || index >= Count)
                 {
-                    throw new IndexOutOfRangeException("My awesome exception");
+                    throw new ArgumentOutOfRangeException("My awesome exception");
                 }
-                if (this.TailIndex >= (NumOfBlockRefs * sizeOfBlock) - 1) //-1 to avoid accessing non existing array
+                if (this.afterLast <= 0)
                 {
-                    DoubleSize();
+                    AllocBlockEnd();
                 }
                 Count++;
                 for (int i = this.Count-1; i > index; i--)

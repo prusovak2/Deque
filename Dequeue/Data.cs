@@ -10,9 +10,11 @@ namespace Dequeue
         {
             private static readonly int sizeOfBlock = 128;
             private int NumOfBlockRefs { get; set; } = 2;
-            ///private int NumOfUsedBlocks { get; set; } = 2;
-            ///private int TailBlock { get => HeadBlock + NumOfUsedBlocks -1; }
-            //private int HeadBlock { get; set; } = 0;
+
+            private int NumOfBlockInitialized = 2;
+            private int beforeFirst = sizeOfBlock;
+            private int headBlockIndex = 0;
+            private int afterLast => ((NumOfBlockInitialized + headBlockIndex )* sizeOfBlock) - (HeadIndex+Count);
 
 
             private int HeadIndex { get; set; } = sizeOfBlock;
@@ -37,7 +39,6 @@ namespace Dequeue
             {              
                 get
                 {
-                    
                     if (i < 0)
                     {
                         throw new ArgumentOutOfRangeException();
@@ -75,32 +76,62 @@ namespace Dequeue
                 S[][] newData = new S[NumOfBlockRefs][];
                 int occupiedIndex = NumOfBlockRefs / 4;
                 data.CopyTo(newData, occupiedIndex);
-                for (int i = 0; i < occupiedIndex; i++)
+                /*for (int i = 0; i < occupiedIndex; i++)
                 {
                     newData[i] = new S[sizeOfBlock];
                     newData[occupiedIndex+oldNumOfRefs + i] = new S[sizeOfBlock];
-                }
+                }*/
                 this.data = newData;
                 this.HeadIndex = (occupiedIndex *sizeOfBlock) +this.HeadIndex;
+                this.headBlockIndex = occupiedIndex + this.headBlockIndex;
             }
 
-            public void AddBegining(S item)
+            private void AllocBlockBegining()
             {
                 if (this.HeadIndex <= 0)
                 {
                     DoubleSize();
                 }
+                this.headBlockIndex--;
+                this.data[headBlockIndex] = new S[sizeOfBlock];
+                this.beforeFirst = sizeOfBlock;
+                this.NumOfBlockInitialized++;
+            }
+            private void AllocBlockEnd()
+            {
+                if (this.TailIndex >= (NumOfBlockRefs * sizeOfBlock) - 1) //-1 to avoid accessing non existing array
+                {
+                    DoubleSize();
+                }
+                this.data[headBlockIndex + NumOfBlockInitialized] = new S[sizeOfBlock];
+                this.NumOfBlockInitialized++; //this will increment afterLast by  128 - size of block
+            }
+            public void AddBegining(S item)
+            {
+                /*if (this.HeadIndex <= 0)
+                {
+                    DoubleSize();
+                }*/
+                if (this.beforeFirst <= 0)
+                {
+                    AllocBlockBegining();
+                }
+                this.beforeFirst--;
                 this.HeadIndex--;
                 Count++;
                 this[0] = item; //to 0 index relative to head index
             }
             public void AddEnd(S item)
             {
-                if (this.TailIndex >= (NumOfBlockRefs*sizeOfBlock)-1) //-1 to avoid accessing non existing array
+                /*if (this.TailIndex >= (NumOfBlockRefs*sizeOfBlock)-1) //-1 to avoid accessing non existing array
                 {
                     DoubleSize();
+                }*/
+                if (this.afterLast <= 0)
+                {
+                    AllocBlockEnd();
                 }
-                Count++;
+                Count++; //incrementing count without dekrementing head index will decrement afterLast
                 this[Count-1] = item; //indexing relative to head index
             }
             public void Insert(int index, S item)

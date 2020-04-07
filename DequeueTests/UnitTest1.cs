@@ -106,7 +106,7 @@ namespace Mianen.DataStructures.Tests
                 Assert.IsTrue(ForEachEqual(d, l));
             }
         }
-        /*/
+        /**/
         [TestMethod()]
         public void Insert_Reverse_KliberExample()
         {
@@ -506,7 +506,7 @@ namespace Mianen.DataStructures.Tests
                 foreach (string s in D)
                 {
                     if (s.StartsWith("A"))
-                        D.AddBegin("A");
+                        D.AddHead("A");  //used to be called AddBegin
                 }
             });
         }
@@ -534,7 +534,7 @@ namespace Mianen.DataStructures.Tests
         {
             Deque<string> someNames = new Deque<string>();
             GetToCompare(out List<string> L, out Deque<string> D);
-            int val;
+            //int val;
             foreach (string s in L)
             {
                 if (s.StartsWith("A"))
@@ -823,6 +823,7 @@ namespace Mianen.DataStructures.Tests
             Assert.AreEqual(-1, D.IndexOf(100));
 
         }
+        /*/
                 [TestMethod()]
         public void Insert()
         {

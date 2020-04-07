@@ -40,12 +40,12 @@ namespace Dequeue
                     
                     if (i < 0)
                     {
-                        throw new IndexOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                     }
                     int index = i + HeadIndex;
                     if(index > TailIndex)
                     {
-                        throw new IndexOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                     }
                     return this.data[GetIndexOfBlock(index)][GetIndexInBlock(index)];
                 }
@@ -53,12 +53,12 @@ namespace Dequeue
                 {
                     if (i < 0)
                     {
-                        throw new IndexOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                     }
                     int index = i + HeadIndex;
                     if (index > TailIndex)
                     {
-                        throw new IndexOutOfRangeException();
+                        throw new ArgumentOutOfRangeException();
                     }
                     this.data[GetIndexOfBlock(index)][GetIndexInBlock(index)] = value;
                 }              
@@ -105,6 +105,12 @@ namespace Dequeue
             }
             public void Insert(int index, S item)
             {
+                if (this.Count == 0)
+                {
+                    AddBegining(item);
+                    return;
+                }
+
                 if(index<0 || index >= Count)
                 {
                     throw new IndexOutOfRangeException("My awesome exception");
@@ -124,7 +130,7 @@ namespace Dequeue
             {
                 if (index < 0 || index >= Count)
                 {
-                    throw new IndexOutOfRangeException("My awesome exception");
+                    throw new ArgumentOutOfRangeException("My awesome exception");
                 }
                 for (int i = index; i < Count-1; i++)
                 {
@@ -184,7 +190,25 @@ namespace Dequeue
                 this.data[0] = new S[sizeOfBlock];
                 this.data[1] = new S[sizeOfBlock];
             }
-
+            public void CopyTo(S[] array, int arrayIndex)
+            {
+                if (array == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                if (arrayIndex < 0 || arrayIndex >= array.Length)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                if(arrayIndex+this.Count>= array.Length)
+                {
+                    throw new ArgumentException("Target array is not long enought to contain source array beggining at given arrayIndex");
+                }
+                for (int i = 0; i < this.Count; i++)
+                {
+                    array[arrayIndex + i] = this[i];
+                }
+            }
         }
     }
     

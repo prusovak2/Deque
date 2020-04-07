@@ -24,6 +24,7 @@ namespace Dequeue
             set 
             {
                 this.data[i] = value;
+                version++;
             }
         }
         public T First => data[0];
@@ -65,12 +66,12 @@ namespace Dequeue
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            data.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Enumerator<T>(this, this.version);
         }
 
         /// <summary>

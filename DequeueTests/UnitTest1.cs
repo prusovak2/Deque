@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dequeue;
+using Deque;
 
 namespace Mianen.DataStructures.Tests
 {
@@ -110,7 +110,7 @@ namespace Mianen.DataStructures.Tests
         [TestMethod()]
         public void Insert_Reverse_KliberExample()
         {
-            var d = new Deque<int>();
+            IDeque<int> d = new Deque<int>();
             var l = new List<int>();
             for (int i = 0; i < 1000; i++)
             {
@@ -118,12 +118,12 @@ namespace Mianen.DataStructures.Tests
                 l.Add(i);
                 Assert.IsTrue(ForEachEqual(d, l));
             }
-            for (int i = 1000; i >= 0; i--)
+            for (int i = 999; i >= 0; i--)
             {
                 d.Insert(i, i);
                 l.Insert(i, i);
                 Assert.IsTrue(ForEachEqual(d, l));
-                d.Reverse();
+                d = d.Reverse();
                 l.Reverse();
                 Assert.IsTrue(ForEachEqual(d, l)); //deq gets  reversed the other way than list why?
             }
@@ -167,13 +167,17 @@ namespace Mianen.DataStructures.Tests
         [TestMethod()]
         public void InsertReversing()
         {
-            var d = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            IDeque<int> d = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var q = new List<int> { 1, 8, 6, 4, 2, 0, 2, 3, 4, 5, 6, 7, 8, 9, 1, 3, 5, 7, 9, 10 };
 
             for (int i = 0; i < 10; i++)
             {
                 d.Insert(1, i);
-                d.Reverse();
+                d = d.Reverse();
+            }
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.WriteLine(d[i]);
             }
             Assert.IsTrue(ForEachEqual(d, q));
         }
@@ -223,8 +227,8 @@ namespace Mianen.DataStructures.Tests
         [TestMethod()]
         public void ReverseInsert()
         {
-            var d = new Deque<int> { 1, 2, 3, 4, 5 };
-            d.Reverse();
+            IDeque<int> d = new Deque<int> { 1, 2, 3, 4, 5 };
+            d = d.Reverse();
 
             d.Insert(2, 11);
             d.Insert(0, 12);
@@ -239,7 +243,7 @@ namespace Mianen.DataStructures.Tests
             Assert.IsTrue(ForEachEqual(d, expected));
 
             expected.Reverse();
-            d.Reverse();
+            d = d.Reverse();
             Assert.IsTrue(ForEachEqual(d, expected));
         }
 
@@ -806,11 +810,11 @@ namespace Mianen.DataStructures.Tests
         [TestMethod()]
         public void IndexOfReverse()
         {
-            var D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            IDeque<int> D = new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
             Assert.AreEqual(1, D.IndexOf(2));
             Assert.AreEqual(9, D.IndexOf(10));
-            D.Reverse();
+            D = D.Reverse();
             Assert.AreEqual(1, D.IndexOf(9));
             Assert.AreEqual(0, D.IndexOf(10));
         }
@@ -821,6 +825,23 @@ namespace Mianen.DataStructures.Tests
             var D = new Deque<int> { };
 
             Assert.AreEqual(-1, D.IndexOf(100));
+
+        }
+
+        [TestMethod()]
+        public void reverseCopyTo()
+        {
+            IDeque<int> D= new Deque<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            List<int> L = new List<int> { 0,10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ,0};
+            int[] A = new int[12];
+            D = D.Reverse();
+            D.CopyTo(A, 1);
+            var l = A.ToList<int>();
+            foreach (var item in l)
+            {
+                Console.WriteLine(item);
+            }
+            Assert.IsTrue(ListCmp(L, l));
 
         }
         /*/
@@ -862,7 +883,7 @@ namespace Mianen.DataStructures.Tests
             L.Add("Trevor");
             L.Add("Scott");
         }
-        bool ForEachEqual(Deque<int> d, List<int> to)
+        bool ForEachEqual(IDeque<int> d, List<int> to)
         {
             var actualItems = new List<int>();
 

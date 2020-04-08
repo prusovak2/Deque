@@ -2,19 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Dequeue
+namespace Deque
 {
     public interface IDeque<T> : IList<T>
     {
         T First { get; }
         T Last { get;  }
         void AddHead(T item);
+        IDeque<T> Reverse();
     }
     public partial class Deque<T> :IDeque<T>
     {
         private Data<T> data = new Data<T>();
 
-        private long version { get; set; } = 0;
+        public long version { get; private set; } = 0;
         public T this [int i]
         {
             get 
@@ -27,8 +28,19 @@ namespace Dequeue
                 version++;
             }
         }
-        public T First => data[0];
-        public T Last => data[data.Count - 1];
+        public T First { 
+            get
+            {
+                return this.data[0];
+            } 
+        }
+        public T Last
+        {
+            get
+            {
+                return this.data[Count-1];
+            }
+        }
         public int Count => this.data.Count;
 
         public bool IsReadOnly => false;
@@ -42,7 +54,8 @@ namespace Dequeue
             version++;
         }
         public void AddHead(T item)
-        {  
+        {
+
             this.data.AddBegining(item);
             version++;
         }
@@ -66,7 +79,11 @@ namespace Dequeue
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            data.CopyTo(array, arrayIndex);
+            data.CopyTo(array, arrayIndex, false);
+        }
+        public void CopyToReversed(T[] array, int arrayIndex)
+        {
+            data.CopyTo(array, arrayIndex, true);
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -113,10 +130,24 @@ namespace Dequeue
             data.RemoveAt(index);
             version++;
         }
+        /// <summary>
+        /// inserts an element on specified index, shifting all elements on index lower or equal to index by one to head of Deque<T>
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="item"></param>
+        public void AppendAt(int index, T item)
+        {
+            this.data.AppendAt(index, item);
+            version++;
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             throw new NotImplementedException();
+        }
+        public IDeque<T> Reverse()
+        {
+            return new ReverseView<T>(this);
         }
     }
 }

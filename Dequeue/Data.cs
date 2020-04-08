@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dequeue
+namespace Deque
 {
     public partial class Deque<T>//:IDeque<T>
     {
@@ -157,6 +157,30 @@ namespace Dequeue
                 }
                 this[index] = item;
             }
+            public void AppendAt(int index, S item)
+            {
+                if (this.Count == 0)
+                {
+                    AddBegining(item);
+                    return;
+                }
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException("My awesome exception");
+                }
+                if (this.beforeFirst <= 0)
+                {
+                    AllocBlockBegining();
+                }
+                Count++;
+                HeadIndex--;
+                for (int i = 0; i < index ; i++)
+                {
+                    this[i] = this[i + 1];
+                }
+                this[index] = item;
+            }
+
             public void RemoveAt(int index)
             {
                 if (index < 0 || index >= Count)
@@ -221,7 +245,7 @@ namespace Dequeue
                 this.data[0] = new S[sizeOfBlock];
                 this.data[1] = new S[sizeOfBlock];
             }
-            public void CopyTo(S[] array, int arrayIndex)
+            public void CopyTo(S[] array, int arrayIndex, bool reversed)
             {
                 if (array == null)
                 {
@@ -235,9 +259,19 @@ namespace Dequeue
                 {
                     throw new ArgumentException("Target array is not long enought to contain source array beggining at given arrayIndex");
                 }
-                for (int i = 0; i < this.Count; i++)
+                if (reversed)
                 {
-                    array[arrayIndex + i] = this[i];
+                    for (int i = this.Count-1; i >=0 ; i--)
+                    {
+                        array[arrayIndex + Count-1-i] = this[i];
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < this.Count; i++)
+                    {
+                        array[arrayIndex + i] = this[i];
+                    }
                 }
             }
         }

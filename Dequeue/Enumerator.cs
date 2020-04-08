@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dequeue
+namespace Deque
 {
     public partial class Deque<T>
     {

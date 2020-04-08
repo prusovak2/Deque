@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dequeue
+namespace Deque
 {
 	public static class DequeTest
 	{
 		public static IList<T> GetReverseView<T>(Deque<T> d)
 		{
-			throw new NotImplementedException();
+			return d.Reverse();
 		}
 	}
 }

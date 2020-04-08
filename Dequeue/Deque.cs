@@ -13,8 +13,14 @@ public interface IDeque<T> : IList<T>
 }
 public partial class Deque<T> :IDeque<T>
 {
+    /// <summary>
+    /// actuall data of this Deque<T>
+    /// </summary>
     private Data<T> data = new Data<T>();
 
+    /// <summary>
+    /// to detect changes during enumeration
+    /// </summary>
     public long version { get; private set; } = 0;
     public T this [int i]
     {
@@ -28,12 +34,18 @@ public partial class Deque<T> :IDeque<T>
             version++;
         }
     }
+    /// <summary>
+    /// peek the firts element of the Deque<T>
+    /// </summary>
     public T First { 
         get
         {
             return this.data[0];
         } 
     }
+    /// <summary>
+    /// peek the last element of the Deque<T>
+    /// </summary>
     public T Last
     {
         get
@@ -41,6 +53,9 @@ public partial class Deque<T> :IDeque<T>
             return this.data[Count-1];
         }
     }
+    /// <summary>
+    /// Number of elements in Deque<T>
+    /// </summary>
     public int Count => this.data.Count;
 
     public bool IsReadOnly => false;
@@ -53,17 +68,29 @@ public partial class Deque<T> :IDeque<T>
         this.data.AddEnd(item);
         version++;
     }
+    /// <summary>
+    /// Adds an element to the beggining of the Deque<T>
+    /// </summary>
+    /// <param name="item"></param>
     public void AddHead(T item)
     {
         this.data.AddBegining(item);
         version++;
     }
+    /// <summary>
+    /// returns the firts element of the Deque<T> and removes it from Deque<T>
+    /// </summary>
+    /// <returns></returns>
     public T RemoveHead()
     {
         T item = data.RemoveHead();
         version++;
         return item;
     }
+    /// <summary>
+    /// returns the last element of the Deque<T> and removes it from Deque<T>
+    /// </summary>
+    /// <returns></returns>
     public T RemoveTail()
     {
         T item = data.RemoveTail();
@@ -71,9 +98,9 @@ public partial class Deque<T> :IDeque<T>
         return item;
     }
 
-/// <summary>
-/// Removes all elements from the Deque<T>.
-/// </summary>
+    /// <summary>
+    /// Removes all elements from the Deque<T>.
+    /// </summary>
     public void Clear()
     {
         data.Clear();
@@ -88,11 +115,20 @@ public partial class Deque<T> :IDeque<T>
     {
         return data.Contains(item);
     }
-
+    /// <summary>
+    /// Copies the entire Deque<T> to a compatible one-dimensional array, starting at the specified index of the target array.
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="arrayIndex"></param>
     public void CopyTo(T[] array, int arrayIndex)
     {
         data.CopyTo(array, arrayIndex, false);
     }
+    /// <summary>
+    /// Copies the entire Deque<T> to a compatible one-dimensional array, starting at the specified index of the target array, in reversed order
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="arrayIndex"></param>
     public void CopyToReversed(T[] array, int arrayIndex)
     {
         data.CopyTo(array, arrayIndex, true);
@@ -142,21 +178,15 @@ public partial class Deque<T> :IDeque<T>
         data.RemoveAt(index);
         version++;
     }
-    /// <summary>
-    /// inserts an element on specified index, shifting all elements on index lower or equal to index by one to head of Deque<T>
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="item"></param>
-    public void AppendAt(int index, T item)
-    {
-        this.data.AppendAt(index, item);
-        version++;
-    }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
         throw new NotImplementedException();
     }
+    /// <summary>
+    /// returns reverse view on this instance of Deque<T>
+    /// </summary>
+    /// <returns></returns>
     public IDeque<T> Reverse()
     {
         return new ReverseView<T>(this);

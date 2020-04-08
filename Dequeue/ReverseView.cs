@@ -164,13 +164,20 @@ public class ReverseView<T>: IDeque<T>
     private class ReversedEnumerator<S> : IEnumerator<S>
     {
         private int curIndex { get; set; }
+        /// <summary>
+        /// version of Deque<T> this Enumerator is enumerating from the moment this enumerator has been created
+        /// </summary>
         long version { get; set; }
+        /// <summary>
+        /// Deque<T> this enumerator is enumerating
+        /// </summary>
         private Deque<S> Que { get; set; }
 
         public ReversedEnumerator(Deque<S> que, long version)
         {
             this.version = version;
             this.Que = que;
+            //initialize with que.Count to ensure that InvalidOperationException is thrown when Current is called befor the first call of MoveNext
             this.curIndex = que.Count;
         }
         public S Current

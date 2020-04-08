@@ -2,7 +2,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Deque;
 
 namespace Mianen.DataStructures.Tests
 {
@@ -118,14 +117,14 @@ namespace Mianen.DataStructures.Tests
                 l.Add(i);
                 Assert.IsTrue(ForEachEqual(d, l));
             }
-            for (int i = 999; i >= 0; i--)
+            for (int i = 1000; i >= 0; i--)
             {
                 d.Insert(i, i);
                 l.Insert(i, i);
                 Assert.IsTrue(ForEachEqual(d, l));
                 d = d.Reverse();
                 l.Reverse();
-                Assert.IsTrue(ForEachEqual(d, l)); //deq gets  reversed the other way than list why?
+                Assert.IsTrue(ForEachEqual(d, l));
             }
         }
 
@@ -142,7 +141,7 @@ namespace Mianen.DataStructures.Tests
         [TestMethod()]
         public void Insert_Reverse_16Bug()
         {
-            var d = new Deque<int>();
+            IDeque<int> d = new Deque<int>();
             var l = new List<int>();
             int val = 16;
             for (int i = 0; i < val; i++)
@@ -158,7 +157,7 @@ namespace Mianen.DataStructures.Tests
                 d.Insert(i, i);
                 l.Insert(i, i);
                 Assert.IsTrue(ForEachEqual(d, l));
-                d.Reverse();
+                d = d.Reverse();
                 l.Reverse();
                 Assert.IsTrue(ForEachEqual(d, l));
             }
@@ -231,12 +230,57 @@ namespace Mianen.DataStructures.Tests
             d = d.Reverse();
 
             d.Insert(2, 11);
+
+            foreach (var item in d)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.Write(d[i] + " ");
+            }
+
+            Console.WriteLine();
+
             d.Insert(0, 12);
+
+            foreach (var item in d)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+
             d.Insert(7, 13);
 
+            foreach (var item in d)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+
             d.RemoveAt(0);
+
+            foreach (var item in d)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+
             d.Insert(0, 15);
+
+            foreach (var item in d)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+
             d.Insert(0, 16);
+
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.WriteLine(d[i]);
+            }
 
             var expected = new List<int> { 16, 15, 5, 4, 11, 3, 2, 1, 13 };
 
@@ -805,6 +849,7 @@ namespace Mianen.DataStructures.Tests
             Assert.AreEqual(1, D.IndexOf(2));
             Assert.AreEqual(9, D.IndexOf(10));
             D.Reverse();
+
         }
 
         [TestMethod()]
@@ -937,6 +982,83 @@ namespace Mianen.DataStructures.Tests
             d.Add(4);
 
             return d;
+        }
+        [TestMethod]
+        public void ForEachEmpty()
+        {
+            var d = new Deque<int>();
+            foreach (var item in d)
+            {
+                Console.WriteLine(item);
+            }
+            var l = new List<int>();
+            foreach (var item in l)
+            {
+                Console.WriteLine(l);
+            }
+            int a = l.IndexOf(42);
+         
+            Console.WriteLine(a);
+            int b = d.IndexOf(42);
+            Console.WriteLine(a);
+            Assert.AreEqual(a, b);
+
+            l.Clear();
+            d.Clear();
+
+            l.Insert(0, 42);
+            Assert.AreEqual(42, l[0]);
+            d.Insert(0, 42);
+            Assert.AreEqual(42, d[0]);
+        }
+        [TestMethod]
+        public void IndexerEmpty()
+        {
+            var d = new Deque<int>();
+            var l = new List<int>();
+            //l[0] = 42;
+            //int i = l[0];
+            d[-1] = 42;
+            int j = d[0];
+        }
+        [TestMethod()]
+        public void MyClear()
+        {
+            var d = new Deque<int>();
+            for (int i = 0; i <= 1000; i++)
+            {
+                d.Add(i);
+            }
+            Assert.AreNotEqual(0, d.Count);
+
+            d.Clear();
+            Assert.AreEqual(-1, d.IndexOf(47));
+
+            foreach (var item in d)
+            {
+                Console.WriteLine(item);
+            }
+            //Console.WriteLine();
+
+            Assert.AreEqual(0, d.Count);
+            Assert.IsTrue(ForEachEqual(d, new List<int>()));
+
+            // works after clearing
+            d.Insert(0, 10);
+            Assert.AreEqual(10, d[0]);
+            Assert.AreEqual(-1, d.IndexOf(5));
+            Assert.AreEqual(0, d.IndexOf(10));
+            d.Add(42);
+            Assert.AreEqual(2, d.Count);
+            Assert.AreEqual(42, d.Last);
+            foreach (var item in d)
+            {
+                Console.WriteLine(item);
+            }
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.WriteLine(d[i]);
+            }
         }
 
     }

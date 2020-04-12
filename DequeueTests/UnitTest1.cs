@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+//I HAVE NOT CREATED THESE TEST 
 namespace Mianen.DataStructures.Tests
 {
     [TestClass()]
@@ -563,7 +565,7 @@ namespace Mianen.DataStructures.Tests
         public void EnumChange03_Contains()
         {
             GetToCompare(out List<string> L, out Deque<string> D);
-            int val;
+            //int val;
             foreach (string s in L)
             {
                 if (s.StartsWith("A"))

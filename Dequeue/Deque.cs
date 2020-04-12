@@ -136,8 +136,30 @@ public partial class Deque<T> :IDeque<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        return new Enumerator<T>(this, this.version);
+        long version = this.version;
+        // return new Enumerator<T>(this, this.version);
+        for (int i = 0; i < Count; i++)
+        {
+            if (version != this.version)
+            {
+                throw new InvalidOperationException();
+            }
+            yield return data[i];
+            //to throw an exeption even when the Deque<T> has been Cleared and therefore no other iteration of for loop
+            //is not gonna take a place due to Count=0
+            if (version != this.version)
+            {
+                throw new InvalidOperationException();
+            }
+        }
     }
+    /*private IEnumerator<T> ActuallyGetEnumerator()
+    {
+        for (int i = 0; i < Count; i++)
+        {
+
+        }
+    }*/
 
     /// <summary>
     /// Searches for the specified object and returns the zero-based index of the first occurrence within the entire Deque<T>.

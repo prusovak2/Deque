@@ -76,7 +76,20 @@ public class ReverseView<T>: IDeque<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        return new ReversedEnumerator<T>(this.deque, this.deque.version);
+        long version = this.deque.version;
+        // return new Enumerator<T>(this, this.version);
+        for (int i = Count-1; i >=0 ; i--)
+        {
+            if (version != this.deque.version)
+            {
+                throw new InvalidOperationException();
+            }
+            yield return this.deque[i];
+            if (version != this.deque.version)
+            {
+                throw new InvalidOperationException();
+            }
+        }
     }
     /// <summary>
     /// Searches for the specified object and returns the zero-based index of the first occurrence within the entire Deque<T>.

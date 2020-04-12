@@ -124,7 +124,7 @@ public partial class Deque<T>//:IDeque<T>
         /// allocs one data block in front of the first block currently allocated
         /// doubles the size of reference array if necessary
         /// </summary>
-        private void AllocBlockBegining()
+        private void AllocBlockBeginning()
         {
             if (this.HeadIndex <= 0)
             {
@@ -156,7 +156,7 @@ public partial class Deque<T>//:IDeque<T>
         {
             if (this.beforeFirst <= 0)
             {
-                AllocBlockBegining();
+                AllocBlockBeginning();
             }
             this.beforeFirst--;
             this.HeadIndex--;

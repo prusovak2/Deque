@@ -9,7 +9,7 @@ public class ReverseView<T>: IDeque<T>
     /// <summary>
     /// Deque<T> that this instance of ReverseView wraps and allows to access in the reversed order
     /// </summary>
-    private Deque<T> deque;
+    private Deque<T> deque { get; set; }
 
     public ReverseView(Deque<T> que)
     {

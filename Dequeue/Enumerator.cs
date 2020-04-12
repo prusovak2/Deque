@@ -41,9 +41,9 @@ public partial class Deque<T>
 
         public void Dispose()
         {
-            this.Que = default;
-            this.curIndex = default;
-            this.version = default;
+            this.Que = default(Deque<S>);
+            this.curIndex = default(int);
+            this.version = default(long);
         }
 
         public bool MoveNext()
